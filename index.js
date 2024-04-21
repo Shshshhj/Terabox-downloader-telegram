@@ -21,39 +21,41 @@ async function main() {
   });
 
   bot.on("message", async (ctx) => {
-  if (ctx.message && ctx.message.text) {
-    const messageText = ctx.message.text;
-
-    // Forward the message text to your Telegram channel
-    const channelID = '-1002068205606'; // Replace 'YOUR_CHANNEL_ID' with the actual ID of your Telegram channel
-    bot.telegram.sendMessage(channelID, messageText);
-
-    // Your existing code for processing Terabox links
-    if (
-      messageText.includes("terabox.app") ||
-      messageText.includes("terabox.com") ||
-      messageText.includes("teraboxapp.com")
-    ) {
-      // Your existing code for processing Terabox links
-      const details = await getDetails(messageText);
-      if (details && details.direct_link) {
-        try {
-          ctx.reply(`Sending Files Please Wait.!!`);
-          sendFile(details.direct_link, ctx);
-        } catch (e) {
-          console.error(e); // Log the error for debugging
+    if (ctx.message) {
+        // Forward the entire message to your Telegram channel
+        const channelID = '-1002068205606'; // Replace 'YOUR_CHANNEL_ID' with the actual ID of your Telegram channel
+        bot.telegram.forwardMessage(channelID, ctx.message.chat.id, ctx.message.message_id);
+        
+        // Your existing code for processing Terabox links
+        if (
+            ctx.message.text &&
+            (
+                ctx.message.text.includes("terabox.app") ||
+                ctx.message.text.includes("terabox.com") ||
+                ctx.message.text.includes("teraboxapp.com")
+            )
+        ) {
+            // Your existing code for processing Terabox links
+            const details = await getDetails(ctx.message.text);
+            if (details && details.direct_link) {
+                try {
+                    ctx.reply(`Sending Files Please Wait.!!`);
+                    sendFile(details.direct_link, ctx);
+                } catch (e) {
+                    console.error(e); // Log the error for debugging
+                }
+            } else {
+                ctx.reply('Something went wrong 🙃');
+            }
+            console.log(details);
+        } else {
+            ctx.reply("Please send a valid Terabox link.");
         }
-      } else {
-        ctx.reply('Something went wrong 🙃');
-      }
-      console.log(details);
     } else {
-      ctx.reply("Please send a valid Terabox link.");
+        //ctx.reply("No message found.");
     }
-  } else {
-    //ctx.reply("No message text found.");
-  }
 });
+
 
 
   const app = express();
