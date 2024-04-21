@@ -24,6 +24,7 @@ async function main() {
     if (ctx.message && ctx.message.text) {
       const messageText = ctx.message.text;
       if (
+        messageText.includes("terabox.app") ||
         messageText.includes("terabox.com") ||
         messageText.includes("teraboxapp.com")
       ) {
